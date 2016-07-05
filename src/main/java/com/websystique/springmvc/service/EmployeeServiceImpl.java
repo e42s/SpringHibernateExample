@@ -8,52 +8,59 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.websystique.springmvc.dao.EmployeeDao;
 import com.websystique.springmvc.model.Employee;
+import com.websystique.springmvc.context.DaoProvider;
+import com.websystique.springmvc.dao.*;
 
 @Service("employeeService")
 @Transactional
 public class EmployeeServiceImpl implements EmployeeService {
 
-	@Autowired
-	private EmployeeDao dao;
-	
-	public Employee findById(int id) {
-		return dao.findById(id);
-	}
+    @Autowired
+    private EmployeeDao dao;
 
-	public void saveEmployee(Employee employee) {
-		dao.saveEmployee(employee);
-	}
+    public Employee findById(int id) {
+        return dao.findById(id);
+    }
 
-	/*
-	 * Since the method is running with Transaction, No need to call hibernate update explicitly.
-	 * Just fetch the entity from db and update it with proper values within transaction.
-	 * It will be updated in db once transaction ends. 
-	 */
-	public void updateEmployee(Employee employee) {
-		Employee entity = dao.findById(employee.getId());
-		if(entity!=null){
-			entity.setName(employee.getName());
-			entity.setJoiningDate(employee.getJoiningDate());
-			entity.setSalary(employee.getSalary());
-			entity.setSsn(employee.getSsn());
-		}
-	}
+    public void saveEmployee(Employee employee) {
+        dao.saveEmployee(employee);
+    }
 
-	public void deleteEmployeeBySsn(String ssn) {
-		dao.deleteEmployeeBySsn(ssn);
-	}
-	
-	public List<Employee> findAllEmployees() {
-		return dao.findAllEmployees();
-	}
+    /*
+     * Since the method is running with Transaction, No need to call hibernate update explicitly.
+     * Just fetch the entity from db and update it with proper values within transaction.
+     * It will be updated in db once transaction ends.
+     */
+    public void updateEmployee(Employee employee) {
+        Employee entity = dao.findById(employee.getId());
+        if(entity!=null){
+            entity.setName(employee.getName());
+            entity.setJoiningDate(employee.getJoiningDate());
+            entity.setSalary(employee.getSalary());
+            entity.setSsn(employee.getSsn());
+        }
+    }
 
-	public Employee findEmployeeBySsn(String ssn) {
-		return dao.findEmployeeBySsn(ssn);
-	}
+    public void deleteEmployeeBySsn(String ssn) {
+        dao.deleteEmployeeBySsn(ssn);
+    }
 
-	public boolean isEmployeeSsnUnique(Integer id, String ssn) {
-		Employee employee = findEmployeeBySsn(ssn);
-		return ( employee == null || ((id != null) && (employee.getId() == id)));
-	}
-	
+    public void deleteEmployeeBySsn2(String ssn) {
+        Employee2Dao dao = (Employee2Dao)DaoProvider.getDao(Employee2Dao.class);
+        dao.deleteEntityById(Integer.valueOf(ssn));
+    }
+
+    public List<Employee> findAllEmployees() {
+        return dao.findAllEmployees();
+    }
+
+    public Employee findEmployeeBySsn(String ssn) {
+        return dao.findEmployeeBySsn(ssn);
+    }
+
+    public boolean isEmployeeSsnUnique(Integer id, String ssn) {
+        Employee employee = findEmployeeBySsn(ssn);
+        return ( employee == null || ((id != null) && (employee.getId() == id)));
+    }
+
 }

@@ -14,6 +14,8 @@ public interface EmployeeService {
 	
 	void deleteEmployeeBySsn(String ssn);
 
+	void deleteEmployeeBySsn2(String ssn);
+
 	List<Employee> findAllEmployees(); 
 	
 	Employee findEmployeeBySsn(String ssn);
